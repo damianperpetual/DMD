@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feliz Día de la Madre</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .intro-screen.hidden {
+            display: none;
+        }
+
+        .intro-emoji {
+            font-size: 4em;
+            margin-bottom: 30px;
+        }
+
+        .intro-title {
+            font-size: 1.8em;
+            color: #8b7355;
+            margin-bottom: 40px;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            font-family: 'Didot', Georgia, serif;
+        }
+
+        .intro-text {
+            font-size: 1.15em;
+            color: #6f5c44;
+            line-height: 2;
+            margin-bottom: 50px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .intro-text-highlight {
+            color: #8b7355;
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .intro-button {
+            padding: 16px 40px;
+            font-size: 1em;
+            background: #8b7355;
+            color: white;
+            border: 1px solid #8b7355;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .intro-button:active {
+            background: #6f5c44;
+            transform: scale(0.98);
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #8b7355;
+            font-size: 1.6em;
+            margin-bottom: 40px;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-family: 'Didot', 'Bodoni MT', 'Cochin', Georgia, serif;
+        }
+
+        .products-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+            max-width: 400px;
+            width: 100%;;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .product-card:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(139, 115, 85, 0.2);
+        }
+
+        .product-card.disabled {
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .product-icon {
+            font-size: 2.2em;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 1.2em;
+            color: #4a4a4a;
+            margin-bottom: 4px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            font-family: 'Didot', Georgia, serif;
+        }
+
+        .product-description {
+            font-size: 0.9em;
+            color: #8b7355;
+            font-weight: 500;
+            font-family: Georgia, serif;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff 0%, #faf8f3 100%);
+            border-radius: 16px;
+            padding: 36px 28px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+            border: 1px solid rgba(139, 115, 85, 0.3);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            color: #8b7355;
+            margin-bottom: 20px;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            font-family: 'Didot', Georgia, serif;
+        }
+
+        .modal-text {
+            font-size: 0.95em;
+            color: #4a4a4a;
+            margin-bottom: 14px;
+            line-height: 1.7;
+            font-family: Georgia, serif;
+        }
+
+        .warning-box {
+            background: rgba(192, 80, 77, 0.1);
+            border: 2px solid rgba(192, 80, 77, 0.3);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #c0504d;
+            font-weight: 500;
+        }
+
+        .code-box {
+            background: rgba(139, 115, 85, 0.1);
+            border: 2px dashed #8b7355;
+            padding: 16px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.3em;
+            color: #8b7355;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .hint-text {
+            font-size: 0.8em;
+            color: #8b7355;
+            font-style: italic;
+            margin-top: 8px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            font-size: 0.9em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: all 0.3s ease;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #8b7355;
+            color: white;
+            border: 1px solid #8b7355;
+        }
+
+        .btn-primary:active {
+            background: #6f5c44;
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #8b7355;
+            border: 1px solid #8b7355;
+        }
+
+        .btn-secondary:active {
+            background: rgba(139, 115, 85, 0.1);
+            transform: scale(0.98);
+        }
+
+        .btn-danger {
+            background: #c0504d;
+            color: white;
+            border: 1px solid #c0504d;
+        }
+
+        .btn-danger:active {
+            background: #a03d3a;
+            transform: scale(0.98);
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1em;
+            border: 2px solid #8b7355;
+            border-radius: 8px;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 3px;
+            margin: 20px 0;
+            background: rgba(139, 115, 85, 0.05);
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #6f5c44;
+            background: white;
+        }
+
+        .error-message {
+            color: #c0504d;
+            font-size: 0.85em;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        .proposal-content {
+            animation: none;
+        }
+
+        .proposal-emoji {
+            font-size: 3em;
+            margin: 10px 0 20px 0;
+        }
+
+        .proposal-detail {
+            background: rgba(139, 115, 85, 0.08);
+            padding: 18px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid rgba(139, 115, 85, 0.2);
+        }
+
+        .proposal-link {
+            color: #8b7355;
+            text-decoration: none;
+            font-weight: 500;
+            border-bottom: 2px solid #8b7355;
+            padding-bottom: 2px;
+        }
+
+        .proposal-link:active {
+            color: #6f5c44;
+        }
+
+        .music-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            font-size: 0.9em;
+            background: rgba(139, 115, 85, 0.15);
+            color: #8b7355;
+            border: 1px solid #8b7355;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: Georgia, serif;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+            box-shadow: none;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .music-button:active {
+            transform: scale(0.98);
+            background: rgba(139, 115, 85, 0.25);
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.4em;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Introducción -->
+    <div class="intro-screen" id="introScreen">
+        <div class="intro-emoji">🎁</div>
+        <div class="intro-title">Feliz Día de la Madre, Dolores</div>
+        <div class="intro-text">
+            Hay <span class="intro-text-highlight">4 opciones</span>.<br>
+            <span class="intro-text-highlight">Una</span> decisión.
+        </div>
+        <button class="intro-button" onclick="hideIntro()">Descubrir</button>
+    </div>
+
+    <div class="container">
+        <h1>Feliz Día de la Madre, Dolores 💐</h1>
+        
+        <div class="products-grid" id="productsGrid">
+            <div class="product-card" id="cardZara" onclick="showModal('zara')">
+                <div class="product-icon">🏷️</div>
+                <div class="product-info">
+                    <div class="product-title">Voucher Zara $1500 USD</div>
+                </div>
+            </div>
+
+            <div class="product-card" id="cardHogar" onclick="showModal('hogar')">
+                <div class="product-icon">🏡</div>
+                <div class="product-info">
+                    <div class="product-title">Servicio Vitalicio del Hogar</div>
+                </div>
+            </div>
+
+            <div class="product-card" id="cardViaje" onclick="showModal('viaje')">
+                <div class="product-icon">✈️</div>
+                <div class="product-info">
+                    <div class="product-title">Viaje Sorpresa VIP</div>
+                </div>
+            </div>
+
+            <div class="product-card" id="cardSimbolico" onclick="showModal('simbolico')">
+                <div class="product-icon">✨</div>
+                <div class="product-info">
+                    <div class="product-title">Regalo Simbólico</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Zara (SIN código) -->
+    <div class="modal" id="modalZara">
+        <div class="modal-content">
+            <div class="modal-title">Voucher Zara</div>
+            <div class="modal-text">$1500 USD confirmados para renovar tu guardarropa.</div>
+            <div class="modal-text" style="font-size: 0.88em; color: #8b7355; margin-top: 8px; font-weight: 500;">
+                Efecto inmediato.
+            </div>
+            
+            <div class="modal-text" style="margin-top: 24px; font-size: 0.9em; font-weight: 500;">¿Querés reclamar este regalo ahora?</div>
+            <div class="buttons" style="flex-direction: column;">
+                <button class="btn btn-danger" onclick="claimGift('zara')">Reclamar ahora</button>
+                <button class="btn btn-secondary" onclick="showCodeScreen('zara', '121013')">Ver otras opciones</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Servicio del hogar (SIN código) -->
+    <div class="modal" id="modalHogar">
+        <div class="modal-content">
+            <div class="modal-title">Servicio Vitalicio del Hogar</div>
+            <div class="modal-text">Te excluye de cualquier tarea hogareña que no desees hacer de por vida.</div>
+            <div class="modal-text" style="font-size: 0.88em; color: #7a7a7a; margin-top: 12px;">
+                Estas tareas pueden ser reemplazadas por agentes externos tipo deliverys, máquinas o lo que sea.
+            </div>
+            
+            <div class="modal-text" style="margin-top: 24px; font-size: 0.9em; font-weight: 500;">¿Querés reclamar este regalo ahora?</div>
+            <div class="buttons" style="flex-direction: column;">
+                <button class="btn btn-danger" onclick="claimGift('hogar')">Reclamar ahora</button>
+                <button class="btn btn-secondary" onclick="showCodeScreen('hogar', '181222')">Ver otras opciones</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Viaje (SIN código) -->
+    <div class="modal" id="modalViaje">
+        <div class="modal-content">
+            <div class="modal-title">Viaje Sorpresa</div>
+            <div class="modal-text">5 días en diciembre. Primera clase. Hotel VIP. Partybus garantizado.</div>
+            <div class="modal-text" style="font-size: 0.88em; color: #7a7a7a; margin-top: 8px;">
+                Podés llevar el mate.
+            </div>
+            
+            <div class="modal-text" style="margin-top: 24px; font-size: 0.9em; font-weight: 500;">¿Querés reclamar este regalo ahora?</div>
+            <div class="buttons" style="flex-direction: column;">
+                <button class="btn btn-danger" onclick="claimGift('viaje')">Reclamar ahora</button>
+                <button class="btn btn-secondary" onclick="showCodeScreen('viaje', '271125')">Ver otras opciones</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de pantalla de código (AHORA SÍ muestra el código) -->
+    <div class="modal" id="modalCodigoScreen">
+        <div class="modal-content">
+            <div class="modal-title">¿Buena Elección?</div>
+            <div class="modal-text" style="margin: 20px 0;">Anotá este código antes de continuar:</div>
+            
+            <div class="code-box" id="screenCode"></div>
+            
+            <div class="buttons" style="margin-top: 30px;">
+                <button class="btn btn-primary" onclick="closeCodeScreen()">Continuar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de advertencia para Regalo Simbólico -->
+    <div class="modal" id="modalAdvertencia">
+        <div class="modal-content">
+            <div class="modal-title">⚠️ Atención</div>
+            <div class="warning-box">
+                Si elegís este regalo, perdés la oportunidad de reclamar todos los demás. No hay vuelta atrás.
+            </div>
+            <div class="modal-text" style="margin-top: 20px; font-size: 1.05em;">¿Estás segura?</div>
+            <div class="buttons" style="flex-direction: column;">
+                <button class="btn btn-primary" onclick="showPasswordModal()">Sí, quiero el Regalo Simbólico</button>
+                <button class="btn btn-secondary" onclick="closeModal('modalAdvertencia')">Ver otras opciones primero</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para pedir la clave -->
+    <div class="modal" id="modalClave">
+        <div class="modal-content">
+            <div class="modal-title">Regalo Simbólico</div>
+            <div class="modal-text" style="margin: 24px 0;">Para abrir este regalo, necesitás ingresar la clave correcta.</div>
+            
+            <input type="text" id="passwordInput" class="password-input" placeholder="CLAVE" maxlength="6">
+            <div id="errorMessage" class="error-message" style="display: none;"></div>
+            
+            <div class="hint-text">Pista: Para obtener la clave, sumá los códigos de las opciones descartadas</div>
+            
+            <div class="buttons" style="flex-direction: column;">
+                <button class="btn btn-primary" onclick="checkPassword()">Abrir Regalo</button>
+                <button class="btn btn-secondary" onclick="closeModal('modalClave')">Volver</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Regalo Simbólico (Propuesta) -->
+    <div class="modal" id="modalSimbolico">
+        <div class="modal-content proposal-content">
+            <div class="proposal-emoji">💍</div>
+            <div class="modal-title">Dolores Molina</div>
+            <div class="modal-text" style="font-size: 1.4em; color: #8b7355; font-weight: 400; margin: 24px 0; font-family: 'Didot', Georgia, serif;">
+                ¿Te casarías conmigo?
+            </div>
+            
+            <div class="proposal-detail">
+                <div style="font-size: 1em; margin-bottom: 12px; color: #4a4a4a;">📅 27 de Noviembre, 12hs</div>
+                <div style="font-size: 0.9em; color: #4a4a4a;">
+                    📍 <a href="https://buenosaires.gob.ar/gobierno/teatro-25-de-mayo" target="_blank" class="proposal-link">Click aquí: Teatro 25 de Mayo</a>
+                </div>
+            </div>
+
+            <div class="modal-text" style="margin-top: 20px; font-size: 0.9em; line-height: 1.8; color: #7a7a7a;">
+                En el marco de los <em>Casamientos en Lugares Emblemáticos</em> de la Ciudad de Buenos Aires.
+            </div>
+
+            <div class="modal-text" style="margin-top: 16px; font-size: 0.88em; color: #8b7355; font-weight: 500;">
+                El 27 de noviembre es el Día de la Medalla Milagrosa.
+            </div>
+
+            <div class="modal-text" style="margin-top: 20px; font-size: 0.9em; line-height: 1.8; color: #4a4a4a;">
+                ✨ Ya tenemos turno reservado<br>
+                👥 Hay espacio para 40 invitados<br>
+                👔 Los testigos ya están confirmados
+            </div>
+
+            <button class="music-button" id="musicButton" onclick="downloadMusic()">
+                🎵 HAY BANDA SONORA PARA ESTO
+            </button>
+
+            <div style="margin-top: 24px; font-size: 1.2em; color: #8b7355; font-weight: 400; font-family: 'Didot', Georgia, serif; letter-spacing: 1px;">
+                Te amo
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de regalo reclamado -->
+    <div class="modal" id="modalReclamado">
+        <div class="modal-content">
+            <div class="modal-title">¿Buena Elección?</div>
+            <div class="modal-text" style="font-size: 1.05em; margin: 20px 0;">Elegiste: <span id="giftName" style="font-weight: 500; color: #8b7355;"></span></div>
+            
+            <div id="timerSection" style="margin-top: 24px;">
+                <div class="modal-text" style="font-size: 0.92em; color: #4a4a4a; margin-bottom: 16px; font-weight: 500;">
+                    Tenés tiempo para cambiar de opinión:
+                </div>
+                
+                <div style="background: rgba(192, 80, 77, 0.08); padding: 16px; border-radius: 12px; margin: 16px 0; border: 2px solid rgba(192, 80, 77, 0.2);">
+                    <div id="countdown" style="font-weight: 700; color: #c0504d; font-size: 2.2em; font-family: 'Courier New', monospace; line-height: 1;">90</div>
+                    <div style="font-size: 0.8em; color: #c0504d; margin-top: 6px; font-weight: 500;">segundos restantes</div>
+                </div>
+                
+                <div class="modal-text" style="font-size: 0.92em; color: #4a4a4a; margin-top: 16px; font-weight: 500;">
+                    Luego perderás el acceso a cualquier otro regalo.
+                </div>
+                
+                <div class="buttons" style="margin-top: 20px;">
+                    <button class="btn btn-primary" id="regretButton" onclick="regretChoice()">Prefiero revisar otras opciones</button>
+                </div>
+            </div>
+            
+            <div id="finalSection" style="display: none; margin-top: 24px;">
+                <div class="modal-text" style="font-size: 0.9em; color: #8b7355; font-weight: 500;">
+                    Tu elección es final. Has perdido acceso a los otros regalos.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function hideIntro() {
+            document.getElementById('introScreen').classList.add('hidden');
+        }
+
+        let musicPlaying = false;
+        let giftClaimed = false;
+        let countdownTimer = null;
+        let timeLeft = 90;
+        let currentClaimedGift = null;
+
+        function downloadMusic() {
+            // Abrir archivo de música desde GitHub
+            window.open('https://damianperpetual.github.io/DMD/bandasonora.mp3', '_blank');
+        }
+
+        function showCodeScreen(giftType, code) {
+            // Cerrar el modal actual
+            closeModal('modalZara');
+            closeModal('modalHogar');
+            closeModal('modalViaje');
+            
+            // Mostrar pantalla de código
+            document.getElementById('screenCode').textContent = code;
+            document.getElementById('modalCodigoScreen').classList.add('active');
+        }
+
+        function closeCodeScreen() {
+            document.getElementById('modalCodigoScreen').classList.remove('active');
+        }
+
+        function showModal(type) {
+            if (giftClaimed && type !== 'claimed') return;
+
+            // Cerrar todos los modales primero
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+
+            // Abrir el modal correspondiente
+            if (type === 'zara') {
+                document.getElementById('modalZara').classList.add('active');
+            } else if (type === 'hogar') {
+                document.getElementById('modalHogar').classList.add('active');
+            } else if (type === 'viaje') {
+                document.getElementById('modalViaje').classList.add('active');
+            } else if (type === 'simbolico') {
+                document.getElementById('modalAdvertencia').classList.add('active');
+            }
+        }
+
+        function showPasswordModal() {
+            document.getElementById('modalAdvertencia').classList.remove('active');
+            document.getElementById('modalClave').classList.add('active');
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('errorMessage').style.display = 'none';
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput').value;
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // La clave correcta es la suma: 121013 + 181222 + 271125 = 573360
+            if (input === '573360') {
+                // Contraseña correcta
+                giftClaimed = true;
+                disableOtherGifts();
+                document.getElementById('modalClave').classList.remove('active');
+                document.getElementById('modalSimbolico').classList.add('active');
+            } else {
+                // Contraseña incorrecta
+                errorMsg.textContent = 'Clave incorrecta. Recordá sumar todos los códigos de los otros regalos.';
+                errorMsg.style.display = 'block';
+                document.getElementById('passwordInput').value = '';
+            }
+        }
+
+        function claimGift(type) {
+            currentClaimedGift = type;
+            disableOtherGifts();
+            
+            // Cerrar modal actual
+            closeModal('modalZara');
+            closeModal('modalHogar');
+            closeModal('modalViaje');
+            
+            // Configurar el modal de reclamado
+            let giftName = '';
+            
+            if (type === 'zara') {
+                giftName = 'Voucher Zara de $1500 USD';
+            } else if (type === 'hogar') {
+                giftName = 'Servicio vitalicio del hogar';
+            } else if (type === 'viaje') {
+                giftName = 'Viaje Sorpresa VIP';
+            }
+            
+            document.getElementById('giftName').textContent = giftName;
+            
+            // Resetear y mostrar el timer
+            timeLeft = 90;
+            document.getElementById('countdown').textContent = timeLeft;
+            document.getElementById('timerSection').style.display = 'block';
+            document.getElementById('finalSection').style.display = 'none';
+            
+            // Mostrar modal
+            document.getElementById('modalReclamado').classList.add('active');
+            
+            // Iniciar cuenta regresiva
+            startCountdown();
+        }
+
+        function startCountdown() {
+            if (countdownTimer) clearInterval(countdownTimer);
+            
+            countdownTimer = setInterval(() => {
+                timeLeft--;
+                document.getElementById('countdown').textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdownTimer);
+                    // Tiempo agotado
+                    giftClaimed = true;
+                    document.getElementById('timerSection').style.display = 'none';
+                    document.getElementById('finalSection').style.display = 'block';
+                }
+            }, 1000);
+        }
+
+        function regretChoice() {
+            // Cancelar el timer
+            if (countdownTimer) clearInterval(countdownTimer);
+            
+            // Cerrar modal de reclamado
+            closeModal('modalReclamado');
+            
+            // Mostrar el código correspondiente
+            let code = '';
+            if (currentClaimedGift === 'zara') {
+                code = '121013';
+            } else if (currentClaimedGift === 'hogar') {
+                code = '181222';
+            } else if (currentClaimedGift === 'viaje') {
+                code = '271125';
+            }
+            
+            // Resetear todo
+            giftClaimed = false;
+            currentClaimedGift = null;
+            enableAllGifts();
+            
+            // Mostrar pantalla de código
+            document.getElementById('screenCode').textContent = code;
+            document.getElementById('modalCodigoScreen').classList.add('active');
+        }
+
+        function disableOtherGifts() {
+            document.getElementById('cardZara').classList.add('disabled');
+            document.getElementById('cardHogar').classList.add('disabled');
+            document.getElementById('cardViaje').classList.add('disabled');
+            document.getElementById('cardSimbolico').classList.add('disabled');
+        }
+
+        function enableAllGifts() {
+            document.getElementById('cardZara').classList.remove('disabled');
+            document.getElementById('cardHogar').classList.remove('disabled');
+            document.getElementById('cardViaje').classList.remove('disabled');
+            document.getElementById('cardSimbolico').classList.remove('disabled');
+        }
+
+        // Permitir presionar Enter en el input de contraseña
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Cerrar modal al hacer click fuera del contenido
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
